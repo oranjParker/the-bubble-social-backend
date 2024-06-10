@@ -25,6 +25,9 @@ public class JwtTokenProvider {
     @Value("${security.jwt.token.refresh-expire-length:604800000}") // 7 days in milliseconds
     private long refreshValidityInMilliseconds;
 
+    @Value("${security.jwt.token.temp-expire-length:600000}") // 10 minutes in milliseconds
+    private long tempValidityInMilliseconds;
+
     // Create JWT token
     public String createRefreshToken(String username) {
         Claims claims = Jwts.claims().setSubject(username);
@@ -47,6 +50,22 @@ public class JwtTokenProvider {
 
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMilliseconds);
+
+        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+
+        return Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(now)
+                .setExpiration(validity)
+                .signWith(SignatureAlgorithm.HS256, keyBytes)
+                .compact();
+    }
+
+    public String createTempToken(String email, String idToken) {
+        Claims claims = Jwts.claims().setSubject(email).setId(idToken);
+
+        Date now = new Date();
+        Date validity = new Date(now.getTime() + tempValidityInMilliseconds);
 
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
 

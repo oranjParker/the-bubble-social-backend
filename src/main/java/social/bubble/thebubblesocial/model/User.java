@@ -7,9 +7,10 @@ import lombok.Data;
 
 import java.util.Date;
 
-@Entity @Table(name = "users") @Data
+@Entity
+@Table(name = "users")
+@Data
 public class User {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -18,9 +19,9 @@ public class User {
     @NotEmpty(message = "Username cannot be empty")
     private String username;
 
-    @NotEmpty(message = "Password cannot be empty")
     private String password;
 
+    @Column(unique = true)
     @Email(message = "Email should be valid")
     private String email;
 
@@ -29,4 +30,40 @@ public class User {
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
+
+    private String oauthProvider;
+    private String oauthProviderId;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = new Date();
+    }
+
+    public User() {
+
+    }
+
+    public User(String username, String email, String oauthProvider, String oauthProviderId) {
+        this.username = username;
+        this.email = email;
+        this.oauthProvider = oauthProvider;
+        this.oauthProviderId = oauthProviderId;
+    }
+
+    public User(String username, String password, String email) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+    }
+
+    public void update(String username, String password, String email) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+    }
 }

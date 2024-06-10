@@ -5,12 +5,10 @@ import lombok.Data;
 @Data
 public class JwtResponse {
     private String userToken;
-    private String refreshToken; // Added field for refresh token
+    private String refreshToken;
 
     public JwtResponse(String userToken, String refreshToken) {
         this.userToken = userToken;
-        this.refreshToken = refreshToken; // Initialize refresh token
+        this.refreshToken = refreshToken;
     }
-
-    // Getters and setters
 }
